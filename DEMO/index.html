@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAPS2 WebScan Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .status-card {
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border: 2px solid;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .status-card.checking {
+            background: #e3f2fd;
+            border-color: #2196f3;
+            color: #1565c0;
+        }
+
+        .status-card.success {
+            background: #e8f5e9;
+            border-color: #4caf50;
+            color: #2e7d32;
+        }
+
+        .status-card.error {
+            background: #ffebee;
+            border-color: #f44336;
+            color: #c62828;
+        }
+
+        .status-card.warning {
+            background: #fff3e0;
+            border-color: #ff9800;
+            color: #e65100;
+        }
+
+        .status-icon {
+            font-size: 24px;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .status-content {
+            flex: 1;
+        }
+
+        .status-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .status-detail {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        .scanner-info {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .scanner-info.show {
+            display: block;
+        }
+
+        .scanner-info-item {
+            display: flex;
+            padding: 8px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .scanner-info-item:last-child {
+            border-bottom: none;
+        }
+
+        .scanner-info-label {
+            font-weight: bold;
+            width: 150px;
+            color: #555;
+        }
+
+        .scanner-info-value {
+            color: #333;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #5a6268;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: #218838;
+        }
+
+        .options {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .options h3 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .option-group {
+            margin-bottom: 15px;
+        }
+
+        .option-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .progress {
+            display: none;
+            margin: 20px 0;
+        }
+
+        .progress.show {
+            display: block;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .result.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .result.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .install-instructions {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .install-instructions h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .install-instructions ol {
+            margin-left: 20px;
+            color: #856404;
+        }
+
+        .install-instructions li {
+            margin: 8px 0;
+        }
+
+        .install-instructions a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .install-instructions a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖨️ Web Document Scanner</h1>
+        <p class="subtitle">Scan documents directly from your web browser using NAPS2.WebScan</p>
+
+        <!-- Status Display -->
+        <div id="statusCard" class="status-card checking">
+            <div class="status-icon">
+                <div class="spinner"></div>
+            </div>
+            <div class="status-content">
+                <div class="status-title">Checking service...</div>
+                <div class="status-detail">Please wait while we connect to the scanner service</div>
+            </div>
+        </div>
+
+        <!-- Scanner Info -->
+        <div id="scannerInfo" class="scanner-info">
+            <h3>📋 Scanner Information</h3>
+            <div class="scanner-info-item">
+                <div class="scanner-info-label">Device:</div>
+                <div class="scanner-info-value" id="deviceName">-</div>
+            </div>
+            <div class="scanner-info-item">
+                <div class="scanner-info-label">Status:</div>
+                <div class="scanner-info-value" id="deviceStatus">-</div>
+            </div>
+        </div>
+
+        <!-- Control Buttons -->
+        <div class="controls">
+            <button id="checkBtn" class="btn-secondary">
+                🔄 Recheck Service
+            </button>
+            <button id="scanBtn" class="btn-primary" disabled>
+                📄 Scan Document
+            </button>
+        </div>
+
+        <!-- Scan Options -->
+        <div class="options">
+            <h3>⚙️ Scan Settings</h3>
+            <div class="option-group">
+                <label for="resolution">Resolution (DPI)</label>
+                <select id="resolution">
+                    <option value="150">150 DPI (Fast, small file)</option>
+                    <option value="300" selected>300 DPI (Standard)</option>
+                    <option value="600">600 DPI (High quality)</option>
+                </select>
+            </div>
+            <div class="option-group">
+                <label for="colorMode">Color Mode</label>
+                <select id="colorMode">
+                    <option value="RGB24">Color</option>
+                    <option value="Grayscale8">Grayscale</option>
+                    <option value="BlackAndWhite1">Black & White</option>
+                </select>
+            </div>
+            <div class="option-group">
+                <label for="format">Output Format</label>
+                <select id="format">
+                    <option value="application/pdf" selected>PDF</option>
+                    <option value="image/jpeg">JPEG</option>
+                    <option value="image/png">PNG</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Progress -->
+        <div id="progress" class="progress">
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill" style="width: 0%">
+                    0%
+                </div>
+            </div>
+        </div>
+
+        <!-- Result Message -->
+        <div id="result" class="result"></div>
+
+        <!-- Installation Instructions -->
+        <div class="install-instructions" id="installInstructions" style="display: none;">
+            <h3>⚠️ Service Not Running</h3>
+            <p>To use web-based scanning, you need to install the NAPS2 WebScan local service:</p>
+            <ol>
+                <li>Download NAPS2 from <a href="https://github.com/cyanfish/naps2-webscan" target="_blank">GitHub</a></li>
+                <li>Build and install the LocalService component</li>
+                <li>Make sure your scanner is connected and drivers are installed</li>
+                <li>Refresh this page and click "Recheck Service"</li>
+            </ol>
+        </div>
+    </div>
+
+    <script type="module">
+        import WebScanner from './js/scanner.js';
+
+        const scanner = new WebScanner();
+        
+        // UI Elements
+        const statusCard = document.getElementById('statusCard');
+        const scannerInfo = document.getElementById('scannerInfo');
+        const checkBtn = document.getElementById('checkBtn');
+        const scanBtn = document.getElementById('scanBtn');
+        const progress = document.getElementById('progress');
+        const progressFill = document.getElementById('progressFill');
+        const result = document.getElementById('result');
+        const installInstructions = document.getElementById('installInstructions');
+
+        // Status update function
+        function updateStatus(type, title, detail) {
+            statusCard.className = `status-card ${type}`;
+            
+            const icons = {
+                checking: '<div class="spinner"></div>',
+                success: '✅',
+                error: '❌',
+                warning: '⚠️'
+            };
+            
+            statusCard.innerHTML = `
+                <div class="status-icon">${icons[type]}</div>
+                <div class="status-content">
+                    <div class="status-title">${title}</div>
+                    <div class="status-detail">${detail}</div>
+                </div>
+            `;
+        }
+
+        // Check service function
+        async function checkService() {
+            updateStatus('checking', 'Checking service...', 'Please wait while we connect to the scanner service');
+            scannerInfo.classList.remove('show');
+            installInstructions.style.display = 'none';
+            scanBtn.disabled = true;
+
+            const isAvailable = await scanner.isServiceAvailable();
+
+            if (isAvailable) {
+                try {
+                    const capabilities = await scanner.getScannerCapabilities();
+                    const status = await scanner.getScannerStatus();
+
+                    updateStatus('success', 'Scanner Ready!', `Connected to ${capabilities.makeAndModel}`);
+                    
+                    document.getElementById('deviceName').textContent = capabilities.makeAndModel;
+                    document.getElementById('deviceStatus').textContent = status.isReady ? 'Ready' : status.state;
+                    
+                    scannerInfo.classList.add('show');
+                    scanBtn.disabled = false;
+                } catch (error) {
+                    updateStatus('warning', 'Service Running', 'Scanner service is running but no scanner was detected. Please check your scanner connection.');
+                    console.error('Scanner error:', error);
+                }
+            } else {
+                updateStatus('error', 'Service Not Running', 'The NAPS2 WebScan service is not running on this computer.');
+                installInstructions.style.display = 'block';
+            }
+        }
+
+        // Scan function
+        async function performScan() {
+            scanBtn.disabled = true;
+            scanBtn.innerHTML = '<div class="spinner"></div> Scanning...';
+            result.classList.remove('show');
+            progress.classList.add('show');
+
+            const options = {
+                resolution: parseInt(document.getElementById('resolution').value),
+                colorMode: document.getElementById('colorMode').value,
+                format: document.getElementById('format').value
+            };
+
+            // Simulate progress
+            let progressValue = 0;
+            const progressInterval = setInterval(() => {
+                if (progressValue < 90) {
+                    progressValue += 10;
+                    progressFill.style.width = progressValue + '%';
+                    progressFill.textContent = progressValue + '%';
+                }
+            }, 500);
+
+            try {
+                const documents = await scanner.scan(options);
+
+                clearInterval(progressInterval);
+                progressFill.style.width = '100%';
+                progressFill.textContent = '100%';
+
+                // Download the documents
+                documents.forEach((doc, index) => {
+                    const ext = getExtension(options.format);
+                    const filename = documents.length > 1 ? `scan-${index + 1}.${ext}` : `scan.${ext}`;
+                    downloadBlob(doc, filename);
+                });
+
+                result.className = 'result success show';
+                result.textContent = `✅ Successfully scanned ${documents.length} document(s)!`;
+
+                setTimeout(() => {
+                    progress.classList.remove('show');
+                    progressFill.style.width = '0%';
+                }, 2000);
+
+            } catch (error) {
+                clearInterval(progressInterval);
+                result.className = 'result error show';
+                result.textContent = `❌ Scan failed: ${error.message}`;
+                progress.classList.remove('show');
+                console.error('Scan error:', error);
+            } finally {
+                scanBtn.disabled = false;
+                scanBtn.innerHTML = '📄 Scan Document';
+            }
+        }
+
+        // Helper functions
+        function downloadBlob(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function getExtension(format) {
+            const formats = {
+                'application/pdf': 'pdf',
+                'image/jpeg': 'jpg',
+                'image/png': 'png'
+            };
+            return formats[format] || 'pdf';
+        }
+
+        // Event listeners
+        checkBtn.addEventListener('click', checkService);
+        scanBtn.addEventListener('click', performScan);
+
+        // Auto-check on load
+        checkService();
+    </script>
+</body>
+</html>
