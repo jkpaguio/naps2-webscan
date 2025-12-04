@@ -22,7 +22,7 @@ namespace NAPS2.WebScan.TrayApp
         private string scannerName = "No scanner detected";
 
         // Auto-start constants
-        private const string APP_NAME = "NAPS2WebScan";
+        private const string APP_NAME = "ITBSWebScan";
         private const string REGISTRY_KEY = @"Software\Microsoft\Windows\CurrentVersion\Run";
 
         public ScannerTrayApp()
@@ -52,7 +52,7 @@ namespace NAPS2.WebScan.TrayApp
                 Icon = new Icon("logo.ico"),
                 ContextMenuStrip = trayMenu,
                 Visible = true,
-                Text = "NAPS2 WebScan - Initializing..."
+                Text = "ITBS WebScan - Initializing..."
             };
 
             trayIcon.DoubleClick += OnTrayIconDoubleClick;
@@ -140,7 +140,7 @@ namespace NAPS2.WebScan.TrayApp
                 UpdateStatus("Error: " + ex.Message, false);
                 ShowBalloonTip("Error", "Failed to start scanner service", ToolTipIcon.Error);
                 MessageBox.Show($"Error starting scanner service:\n\n{ex.Message}", 
-                    "NAPS2 WebScan Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    "ITBS WebScan Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -172,7 +172,7 @@ namespace NAPS2.WebScan.TrayApp
             catch (Exception ex)
             {
                 MessageBox.Show($"Error stopping scanner service:\n\n{ex.Message}",
-                    "NAPS2 WebScan Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    "ITBS WebScan Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -181,7 +181,7 @@ namespace NAPS2.WebScan.TrayApp
             if (trayIcon.ContextMenuStrip?.Items[0] != null)
             {
                 trayIcon.ContextMenuStrip.Items[0].Text = $"Status: {status}";
-                trayIcon.Text = $"NAPS2 WebScan - {status}";
+                trayIcon.Text = $"ITBS WebScan - {status}";
                 
                 // Update icon color (you can use custom icons here)
                 trayIcon.Icon = running ? new Icon("logo.ico") : new Icon("logo.ico");
@@ -204,14 +204,15 @@ namespace NAPS2.WebScan.TrayApp
         {
             try
             {
-                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(REGISTRY_KEY, true))
+                using (RegistryKey? key = Registry.CurrentUser.OpenSubKey(REGISTRY_KEY, true))
                 {
                     if (key != null)
                     {
                         if (enable)
                         {
                             string exePath = Application.ExecutablePath;
-                            key.SetValue(APP_NAME, $"\"{exePath}\"");
+                            // Ensure proper quoting and registry value type for paths with spaces
+                            key.SetValue(APP_NAME, $"\"{exePath}\"", RegistryValueKind.String);
                             ShowBalloonTip("Auto-Start Enabled", "Application will start automatically on login", ToolTipIcon.Info);
                         }
                         else
@@ -225,7 +226,7 @@ namespace NAPS2.WebScan.TrayApp
             catch (Exception ex)
             {
                 MessageBox.Show($"Error setting auto-start:\n\n{ex.Message}", 
-                    "NAPS2 WebScan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    "ITBS WebScan", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -233,11 +234,11 @@ namespace NAPS2.WebScan.TrayApp
         {
             try
             {
-                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(REGISTRY_KEY, false))
+                using (RegistryKey? key = Registry.CurrentUser.OpenSubKey(REGISTRY_KEY, false))
                 {
                     if (key != null)
                     {
-                        object value = key.GetValue(APP_NAME);
+                        object? value = key.GetValue(APP_NAME);
                         return value != null;
                     }
                 }
@@ -285,13 +286,13 @@ namespace NAPS2.WebScan.TrayApp
         private void OnAboutClick(object? sender, EventArgs e)
         {
             MessageBox.Show(
-                $"NAPS2 WebScan System Tray Application\n\n" +
+                $"ITBS WebScan System Tray Application\n\n" +
                 $"Version: 1.0.0\n" +
                 $"Scanner: {scannerName}\n" +
                 $"Port: 9801\n" +
                 $"Auto-Start: {(IsAutoStartEnabled() ? "Enabled" : "Disabled")}\n\n" +
                 $"Provides web-based document scanning for local applications.",
-                "About NAPS2 WebScan",
+                "About ITBS WebScan",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
         }
@@ -302,7 +303,7 @@ namespace NAPS2.WebScan.TrayApp
             {
                 var result = MessageBox.Show(
                     "The scanner service is currently running. Are you sure you want to exit?",
-                    "NAPS2 WebScan",
+                    "ITBS WebScan",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question);
 
@@ -319,13 +320,13 @@ namespace NAPS2.WebScan.TrayApp
         private void OnTrayIconDoubleClick(object? sender, EventArgs e)
         {
             MessageBox.Show(
-                $"NAPS2 WebScan is running\n\n" +
+                $"ITBS WebScan is running\n\n" +
                 $"Scanner: {scannerName}\n" +
                 $"Status: {(isRunning ? "Running" : "Stopped")}\n" +
                 $"Port: 9801\n" +
                 $"Auto-Start: {(IsAutoStartEnabled() ? "Enabled" : "Disabled")}\n\n" +
                 $"Right-click the icon for options.",
-                "NAPS2 WebScan",
+                "ITBS WebScan",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
         }
