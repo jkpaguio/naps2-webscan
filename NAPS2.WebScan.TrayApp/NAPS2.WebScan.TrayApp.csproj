@@ -13,6 +13,9 @@
     <PackageReference Include="NAPS2.Escl.Server" Version="1.2.1" />
     <PackageReference Include="NAPS2.Images.ImageSharp" Version="1.2.1" />
     <PackageReference Include="NAPS2.Sdk" Version="1.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="logo.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -10,6 +10,7 @@ using NAPS2.Images.ImageSharp;
 using NAPS2.Remoting.Server;
 using NAPS2.Scan;
 using System.IO;
+using System.Linq;
 
 namespace NAPS2.WebScan.TrayApp
 {
@@ -21,6 +22,9 @@ namespace NAPS2.WebScan.TrayApp
         private CancellationTokenSource? cancellationTokenSource;
         private bool isRunning = false;
         private string scannerName = "No scanner detected";
+        private string preferredScanSource = "Auto-detect";
+        private int serverPort = 9801;
+        private string currentStatus = "Initializing...";
 
         // Auto-start constants
         private const string APP_NAME = "ITBSWebScan";
@@ -28,20 +32,17 @@ namespace NAPS2.WebScan.TrayApp
 
         public ScannerTrayApp()
         {
+            // Load saved settings
+            LoadSettings();
+
             // Create context menu
             trayMenu = new ContextMenuStrip();
-            trayMenu.Items.Add("Scanner Status: Initializing...", null, OnStatusClick).Enabled = false;
+            trayMenu.Items.Add("Status: Initializing...", null, OnStatusClick).Enabled = false;
             trayMenu.Items.Add(new ToolStripSeparator());
             trayMenu.Items.Add("Start Service", null, OnStartClick);
             trayMenu.Items.Add("Stop Service", null, OnStopClick);
             trayMenu.Items.Add(new ToolStripSeparator());
-            
-            // Add auto-start option with checkmark
-            var autoStartItem = new ToolStripMenuItem("Start with Windows", null, OnAutoStartClick);
-            autoStartItem.Checked = IsAutoStartEnabled();
-            trayMenu.Items.Add(autoStartItem);
-            
-            trayMenu.Items.Add(new ToolStripSeparator());
+            trayMenu.Items.Add("Settings...", null, OnSettingsClick);
             trayMenu.Items.Add("Open Scanner Status", null, OnOpenStatusClick);
             trayMenu.Items.Add(new ToolStripSeparator());
             trayMenu.Items.Add("About", null, OnAboutClick);
@@ -56,7 +57,8 @@ namespace NAPS2.WebScan.TrayApp
                 Text = "ITBS WebScan - Initializing..."
             };
 
-            trayIcon.DoubleClick += OnTrayIconDoubleClick;
+            // Single click opens settings, right-click shows menu
+            trayIcon.Click += OnTrayIconClick;
 
             // Enable auto-start by default on first run
             if (!IsAutoStartEnabled())
@@ -66,6 +68,39 @@ namespace NAPS2.WebScan.TrayApp
 
             // Start the scanner service automatically
             _ = StartScannerServiceAsync();
+        }
+
+        private void LoadSettings()
+        {
+            try
+            {
+                // Load settings from registry or config file
+                using (RegistryKey? key = Registry.CurrentUser.OpenSubKey(@"Software\ITBSWebScan", false))
+                {
+                    if (key != null)
+                    {
+                        preferredScanSource = key.GetValue("ScanSource", "Auto-detect")?.ToString() ?? "Auto-detect";
+                        serverPort = Convert.ToInt32(key.GetValue("Port", 9801));
+                    }
+                }
+            }
+            catch { }
+        }
+
+        private void SaveSettings()
+        {
+            try
+            {
+                using (RegistryKey? key = Registry.CurrentUser.CreateSubKey(@"Software\ITBSWebScan"))
+                {
+                    if (key != null)
+                    {
+                        key.SetValue("ScanSource", preferredScanSource);
+                        key.SetValue("Port", serverPort);
+                    }
+                }
+            }
+            catch { }
         }
 
         private Icon LoadIcon()
@@ -143,13 +178,14 @@ namespace NAPS2.WebScan.TrayApp
                         return;
                     }
 
-                    var port = 9801;
-                    scanServer.RegisterDevice(firstDevice, port: port);
+                    scanServer.RegisterDevice(firstDevice, port: serverPort);
                     await scanServer.Start();
 
                     isRunning = true;
-                    UpdateStatus($"Running on port {port}", true);
-                    ShowBalloonTip("Scanner Ready", $"Scanner: {scannerName}\nPort: {port}", ToolTipIcon.Info);
+                    UpdateStatus($"Running on port {serverPort}", true);
+                    ShowBalloonTip("Scanner Ready", 
+                        $"Scanner: {scannerName}\nPort: {serverPort}\nSource: {preferredScanSource}", 
+                        ToolTipIcon.Info);
 
                     // Keep running until cancelled
                     await Task.Delay(Timeout.Infinite, token);
@@ -202,6 +238,8 @@ namespace NAPS2.WebScan.TrayApp
 
         private void UpdateStatus(string status, bool running)
         {
+            currentStatus = status;
+            
             if (trayIcon.ContextMenuStrip?.Items[0] != null)
             {
                 trayIcon.ContextMenuStrip.Items[0].Text = $"Status: {status}";
@@ -235,14 +273,11 @@ namespace NAPS2.WebScan.TrayApp
                         if (enable)
                         {
                             string exePath = Application.ExecutablePath;
-                            // Ensure proper quoting and registry value type for paths with spaces
                             key.SetValue(APP_NAME, $"\"{exePath}\"", RegistryValueKind.String);
-                            ShowBalloonTip("Auto-Start Enabled", "Application will start automatically on login", ToolTipIcon.Info);
                         }
                         else
                         {
                             key.DeleteValue(APP_NAME, false);
-                            ShowBalloonTip("Auto-Start Disabled", "Application will no longer start automatically", ToolTipIcon.Info);
                         }
                     }
                 }
@@ -271,18 +306,6 @@ namespace NAPS2.WebScan.TrayApp
             return false;
         }
 
-        private void OnAutoStartClick(object? sender, EventArgs e)
-        {
-            bool currentState = IsAutoStartEnabled();
-            SetAutoStart(!currentState);
-            
-            // Update menu checkmark
-            if (sender is ToolStripMenuItem menuItem)
-            {
-                menuItem.Checked = !currentState;
-            }
-        }
-
         private void OnStatusClick(object? sender, EventArgs e)
         {
             // Status item (disabled)
@@ -298,22 +321,67 @@ namespace NAPS2.WebScan.TrayApp
             await StopScannerServiceAsync();
         }
 
+        private void OnSettingsClick(object? sender, EventArgs e)
+        {
+            OpenSettings();
+        }
+
+        private void OpenSettings()
+        {
+            using (var settingsForm = new SettingsForm(
+                scannerName, 
+                preferredScanSource,
+                IsAutoStartEnabled(),
+                isRunning,
+                serverPort,
+                currentStatus))
+            {
+                if (settingsForm.ShowDialog() == DialogResult.OK && settingsForm.SettingsSaved)
+                {
+                    // Update settings
+                    preferredScanSource = settingsForm.SelectedScanSource;
+
+                    // Update auto-start
+                    if (IsAutoStartEnabled() != settingsForm.AutoStartEnabled)
+                    {
+                        SetAutoStart(settingsForm.AutoStartEnabled);
+                    }
+
+                    // Save settings
+                    SaveSettings();
+
+                    ShowBalloonTip("Settings Saved", 
+                        $"Scan Source: {preferredScanSource}", 
+                        ToolTipIcon.Info);
+                }
+            }
+        }
+
         private void OnOpenStatusClick(object? sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            try
             {
-                FileName = "http://localhost:9801/eSCL/ScannerStatus",
-                UseShellExecute = true
-            });
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = $"http://localhost:{serverPort}/eSCL/ScannerStatus",
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error opening browser:\n\n{ex.Message}",
+                    "ITBS WebScan Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void OnAboutClick(object? sender, EventArgs e)
         {
             MessageBox.Show(
                 $"ITBS WebScan System Tray Application\n\n" +
-                $"Version: 1.0.0\n" +
+                $"Version: 1.1.0\n" +
                 $"Scanner: {scannerName}\n" +
-                $"Port: 9801\n" +
+                $"Port: {serverPort}\n" +
+                $"Scan Source: {preferredScanSource}\n" +
                 $"Auto-Start: {(IsAutoStartEnabled() ? "Enabled" : "Disabled")}\n\n" +
                 $"Provides web-based document scanning for local applications.",
                 "About ITBS WebScan",
@@ -341,18 +409,13 @@ namespace NAPS2.WebScan.TrayApp
             Application.Exit();
         }
 
-        private void OnTrayIconDoubleClick(object? sender, EventArgs e)
+        private void OnTrayIconClick(object? sender, EventArgs e)
         {
-            MessageBox.Show(
-                $"ITBS WebScan is running\n\n" +
-                $"Scanner: {scannerName}\n" +
-                $"Status: {(isRunning ? "Running" : "Stopped")}\n" +
-                $"Port: 9801\n" +
-                $"Auto-Start: {(IsAutoStartEnabled() ? "Enabled" : "Disabled")}\n\n" +
-                $"Right-click the icon for options.",
-                "ITBS WebScan",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information);
+            // Check if it's a left click (not right-click for context menu)
+            if (e is MouseEventArgs mouseEvent && mouseEvent.Button == MouseButtons.Left)
+            {
+                OpenSettings();
+            }
         }
 
         protected override void Dispose(bool disposing)
