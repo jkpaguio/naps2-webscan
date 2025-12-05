@@ -9,6 +9,7 @@ using NAPS2.Escl.Server;
 using NAPS2.Images.ImageSharp;
 using NAPS2.Remoting.Server;
 using NAPS2.Scan;
+using System.IO;
 
 namespace NAPS2.WebScan.TrayApp
 {
@@ -46,10 +47,10 @@ namespace NAPS2.WebScan.TrayApp
             trayMenu.Items.Add("About", null, OnAboutClick);
             trayMenu.Items.Add("Exit", null, OnExitClick);
 
-            // Create tray icon
+            // Create tray icon with fallback
             trayIcon = new NotifyIcon()
             {
-                Icon = new Icon("logo.ico"),
+                Icon = LoadIcon(),
                 ContextMenuStrip = trayMenu,
                 Visible = true,
                 Text = "ITBS WebScan - Initializing..."
@@ -65,6 +66,29 @@ namespace NAPS2.WebScan.TrayApp
 
             // Start the scanner service automatically
             _ = StartScannerServiceAsync();
+        }
+
+        private Icon LoadIcon()
+        {
+            try
+            {
+                // Always use full path from application directory
+                string appDir = AppDomain.CurrentDomain.BaseDirectory;
+                string iconPath = Path.Combine(appDir, "logo.ico");
+                
+                if (File.Exists(iconPath))
+                {
+                    return new Icon(iconPath);
+                }
+                
+                // Fallback to system icon if logo.ico not found
+                return SystemIcons.Application;
+            }
+            catch
+            {
+                // If all else fails, use system icon
+                return SystemIcons.Application;
+            }
         }
 
         private async Task StartScannerServiceAsync()
@@ -183,8 +207,8 @@ namespace NAPS2.WebScan.TrayApp
                 trayIcon.ContextMenuStrip.Items[0].Text = $"Status: {status}";
                 trayIcon.Text = $"ITBS WebScan - {status}";
                 
-                // Update icon color (you can use custom icons here)
-                trayIcon.Icon = running ? new Icon("logo.ico") : new Icon("logo.ico");
+                // Update icon (will use system icon if logo.ico is missing)
+                trayIcon.Icon = LoadIcon();
 
                 // Enable/disable start/stop buttons
                 if (trayIcon.ContextMenuStrip.Items[2] is ToolStripMenuItem startItem)

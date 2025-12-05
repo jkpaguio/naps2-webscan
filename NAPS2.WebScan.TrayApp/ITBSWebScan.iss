@@ -1,5 +1,4 @@
 ; Inno Setup Script for ITBS WebScan Tray App
-; Updated with ITBS branding
 
 #define MyAppName "ITBS WebScan"
 #define MyAppVersion "1.0.0"
@@ -14,12 +13,13 @@ AppPublisher={#MyAppPublisher}
 DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
-OutputDir=D:\PROJECTS\BPLS\naps2-webscan\NAPS2.WebScan.TrayApp\installer
+OutputDir=D:\PROJECTS\BPLS\naps2-webscan\installer
 OutputBaseFilename=ITBSWebScan-Setup
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
 PrivilegesRequired=lowest
+ArchitecturesInstallIn64BitMode=x64
 
 [Tasks]
 Name: "autostart"; Description: "Start {#MyAppName} automatically when Windows starts"; GroupDescription: "Additional options:"; Flags: checkedonce
@@ -29,17 +29,16 @@ Name: "autostart"; Description: "Start {#MyAppName} automatically when Windows s
 Source: "D:\PROJECTS\BPLS\naps2-webscan\NAPS2.WebScan.TrayApp\bin\Release\net10.0-windows\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
+Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"
 Name: "{group}\Uninstall {#MyAppName}"; Filename: "{uninstallexe}"
-Name: "{autostartup}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: autostart
 
 [Registry]
-; Auto-start registry entry (only if user selected the option)
+; Auto-start registry entry with working directory
 Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "ITBSWebScan"; ValueData: """{app}\{#MyAppExeName}"""; Flags: uninsdeletevalue; Tasks: autostart
 
 [Run]
 ; Offer to launch the app after installation
-Filename: "{app}\{#MyAppExeName}"; Description: "Launch {#MyAppName}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"; Description: "Launch {#MyAppName}"; Flags: nowait postinstall skipifsilent
 
 [UninstallRun]
 ; Stop the app before uninstalling
