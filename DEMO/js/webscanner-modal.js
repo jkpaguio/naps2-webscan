@@ -301,29 +301,7 @@ class WebScannerModal {
     }
 
     getModalHTML() {
-        return `<div id="webScannerModal" class="wsm"><div class="wsm-backdrop" onclick="webScannerInstance.close()"></div><div class="wsm-content"><div class="wsm-container"><div class="wsm-header"><div><h1>🖨️ Web Document Scanner</h1><p class="wsm-subtitle">Single and batch scanning with preview</p></div><button class="wsm-close-btn" onclick="webScannerInstance.close()">×</button></div><div id="wsmStatus" class="wsm-status wsm-checking"><div class="wsm-status-icon"><div class="wsm-spinner"></div></div><div class="wsm-status-content"><div class="wsm-status-title">Checking service...</div><div class="wsm-status-detail">Connecting to scanner</div></div></div><div id="wsmCapabilities" class="wsm-capabilities" style="display: none;"><div class="wsm-capabilities-header" onclick="webScannerInstance.toggleCapabilities()" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 10px 0;"><h3 style="margin: 0;">🔍 Scanner Capabilities</h3><span id="wsmCapabilitiesToggle" style="font-size: 20px; transition: transform 0.3s;">▼</span></div><div id="wsmCapabilitiesContent" style="display: none; overflow: hidden;"><div class="wsm-caps-grid"><div class="wsm-cap-item"><strong>Input Sources:</strong><span id="wsmCapSources">-</span></div><div class="wsm-cap-item"><strong>Resolutions:</strong><span id="wsmCapResolutions">-</span></div><div class="wsm-cap-item"><strong>Color Modes:</strong><span id="wsmCapColorModes">-</span></div><div class="wsm-cap-item"><strong>Formats:</strong><span id="wsmCapFormats">-</span></div></div></div></div><div class="wsm-tabs"><button class="wsm-tab wsm-active" onclick="webScannerInstance.switchTab('single')">📄 Single Scan</button><button class="wsm-tab" onclick="webScannerInstance.switchTab('batch')">📚 Batch Scan</button></div><div id="wsmSingleTab" class="wsm-tab-content wsm-active"><div class="wsm-options" style="background: #e8f4f8; border: 2px solid #2196f3;"><h3>📦 Document Store</h3><div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;"><div><strong id="wsmStoreCount">0 documents</strong> stored locally<button class="wsm-btn-primary" onclick="webScannerInstance.openPreview()" style="margin-left: 15px; padding: 8px 16px; font-size: 13px;">👁️ View All</button></div><button class="wsm-btn-danger" onclick="webScannerInstance.clearAllDocuments()" style="padding: 8px 16px; font-size: 13px;">🗑️ Clear All</button></div></div><div class="wsm-controls"><button id="wsmCheckBtn" class="wsm-btn-secondary">🔄 Recheck Service</button><button id="wsmScanBtn" class="wsm-btn-primary" disabled>📄 Scan Document</button></div><div class="wsm-options"><h3>⚙️ Scan Settings</h3><div class="wsm-option-group"><label for="wsmSource">Input Source</label><select id="wsmSource"><option value="Platen">Flatbed (Platen)</option><option value="Feeder">Document Feeder (ADF)</option></select></div><div class="wsm-option-group"><label for="wsmResolution">Resolution (DPI)</label><select id="wsmResolution"><option value="150">150 DPI</option><option value="300" selected>300 DPI</option><option value="600">600 DPI</option></select></div><div class="wsm-option-group"><label for="wsmColorMode">Color Mode</label><select id="wsmColorMode"><option value="RGB24" selected>Color</option><option value="Grayscale8">Grayscale</option><option value="BlackAndWhite1">Black & White</option></select></div><div class="wsm-option-group"><label for="wsmIntent">Scan Intent</label><select id="wsmIntent"><option value="Document" selected>Document</option><option value="Photo">Photo</option><option value="TextAndGraphic">Text and Graphic</option></select></div><div class="wsm-option-group"><label for="wsmFormat">Output Format</label><select id="wsmFormat"><option value="image/jpeg">JPEG</option><option value="image/png">PNG</option><option value="application/pdf">PDF</option></select></div></div></div><div id="wsmBatchTab" class="wsm-tab-content"><div class="wsm-options" style="background: #e8f4f8; border: 2px solid #2196f3;"><h3>📦 Document Store</h3><div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;"><div><strong id="wsmStoreCountBatch">0 documents</strong> stored<button class="wsm-btn-primary" onclick="webScannerInstance.openPreview()" style="margin-left: 15px; padding: 8px 16px; font-size: 13px;">👁️ View All</button></div><button class="wsm-btn-danger" onclick="webScannerInstance.clearAllDocuments()" style="padding: 8px 16px; font-size: 13px;">🗑️ Clear All</button></div></div><div class="wsm-options"><h3>🔄 Scan Mode</h3><div class="wsm-radio-group"><label class="wsm-radio-option wsm-selected"><input type="radio" name="wsmScanMode" value="single" checked><div><strong>Single scan</strong><br><small>One operation</small></div></label><label class="wsm-radio-option"><input type="radio" name="wsmScanMode" value="prompt"><div><strong>Multiple scans (prompt)</strong><br><small>Replace paper between scans</small></div></label><div class="wsm-sub-options" id="wsmPromptOptions"><div class="wsm-option-group"><label for="wsmPromptScans">Number of scans</label><input type="number" id="wsmPromptScans" value="3" min="2" max="20"></div></div><label class="wsm-radio-option"><input type="radio" name="wsmScanMode" value="delay"><div><strong>Multiple scans (delay)</strong><br><small>Automatic with delay</small></div></label><div class="wsm-sub-options" id="wsmDelayOptions"><div class="wsm-option-group"><label for="wsmDelayScans">Number of scans</label><input type="number" id="wsmDelayScans" value="3" min="2" max="20"></div><div class="wsm-option-group"><label for="wsmDelayTime">Delay (seconds)</label><input type="number" id="wsmDelayTime" value="10" min="5" max="60"></div></div></div></div><div class="wsm-options"><h3>💾 Output Configuration</h3><div class="wsm-radio-group"><label class="wsm-radio-option wsm-selected"><input type="radio" name="wsmOutputMode" value="preview" checked><div><strong>Load into preview</strong><br><small>Review before saving</small></div></label><label class="wsm-radio-option"><input type="radio" name="wsmOutputMode" value="single"><div><strong>Save to single file</strong><br><small>All pages combined</small></div></label><label class="wsm-radio-option"><input type="radio" name="wsmOutputMode" value="multiple"><div><strong>Save to multiple files</strong><br><small>Split files</small></div></label><div class="wsm-sub-options" id="wsmMultipleOptions"><div class="wsm-option-group"><label for="wsmSplitMode">Split by</label><select id="wsmSplitMode"><option value="scan">One file per scan</option><option value="page">One file per page</option></select></div><div class="wsm-option-group"><label for="wsmFilenamePattern">Filename pattern</label><input type="text" id="wsmFilenamePattern" value="scan-$(nnn)"><small style="color: #666; display: block; margin-top: 5px;">Use $(nnn) for numbering</small></div></div></div></div><div class="wsm-controls"><button id="wsmStartBatchBtn" class="wsm-btn-primary" disabled>🚀 Start Batch Scan</button><button id="wsmStopBatchBtn" class="wsm-btn-danger" disabled style="display: none;">⏹️ Stop Batch</button></div><div id="wsmBatchProgress" class="wsm-batch-progress"><h3>📊 Batch Progress</h3><div class="wsm-batch-status"><span id="wsmBatchStatusText">Initializing...</span><span id="wsmBatchCounter">0 / 0</span></div><div class="wsm-progress-bar"><div id="wsmBatchProgressFill" class="wsm-progress-fill" style="width: 0%">0%</div></div><div class="wsm-batch-log" id="wsmBatchLog"></div></div></div><div id="wsmResult" class="wsm-result"></div></div></div></div><div id="wsmPreviewModal" class="wsm-preview-modal"><div class="wsm-preview-container"><div class="wsm-preview-header"><h2>📄 Scanned Documents</h2><button class="wsm-close-btn" onclick="webScannerInstance.closePreview()">×</button></div><div class="wsm-preview-body"><div id="wsmPreviewGrid" class="wsm-preview-grid"></div></div><div class="wsm-preview-actions"><button class="wsm-btn-secondary" onclick="webScannerInstance.clearAllDocuments()">🗑️ Clear All</button><button class="wsm-btn-success" onclick="webScannerInstance.closeAllModals()">✓ Okay</button></div></div></div><div id="wsmBatchPromptModal" class="wsm-batch-prompt-modal"><div class="wsm-batch-prompt-content"><h2>📄 Ready for Next Scan</h2><p id="wsmPromptMessage">Replace paper and click Continue.</p><div class="wsm-batch-prompt-actions"><button class="wsm-btn-danger" onclick="webScannerInstance.cancelBatchPrompt()">Cancel</button><button class="wsm-btn-success" onclick="webScannerInstance.continueBatchPrompt()">Continue</button></div></div></div>`;
-    }
-
-    // Add this new method to the WebScannerModal class
-    closeAllModals() {
-        // Close the preview modal
-        this.closePreview();
-        // Close the main scanner modal
-        this.close();
-    }
-
-    // Add this method to your class to handle the toggle
-    toggleCapabilities() {
-        const content = document.getElementById('wsmCapabilitiesContent');
-        const toggle = document.getElementById('wsmCapabilitiesToggle');
-
-        if (content.style.display === 'none') {
-            content.style.display = 'block';
-            toggle.style.transform = 'rotate(180deg)';
-        } else {
-            content.style.display = 'none';
-            toggle.style.transform = 'rotate(0deg)';
-        }
+        return `<div id="webScannerModal" class="wsm"><div class="wsm-backdrop" onclick="webScannerInstance.close()"></div><div class="wsm-content"><div class="wsm-container"><div class="wsm-header"><div><h1>🖨️ Web Document Scanner</h1><p class="wsm-subtitle">Single and batch scanning with preview</p></div><button class="wsm-close-btn" onclick="webScannerInstance.close()">×</button></div><div id="wsmStatus" class="wsm-status wsm-checking"><div class="wsm-status-icon"><div class="wsm-spinner"></div></div><div class="wsm-status-content"><div class="wsm-status-title">Checking service...</div><div class="wsm-status-detail">Connecting to scanner</div></div></div><div id="wsmCapabilities" class="wsm-capabilities" style="display: none;"><h3>🔍 Scanner Capabilities</h3><div class="wsm-caps-grid"><div class="wsm-cap-item"><strong>Input Sources:</strong><span id="wsmCapSources">-</span></div><div class="wsm-cap-item"><strong>Resolutions:</strong><span id="wsmCapResolutions">-</span></div><div class="wsm-cap-item"><strong>Color Modes:</strong><span id="wsmCapColorModes">-</span></div><div class="wsm-cap-item"><strong>Formats:</strong><span id="wsmCapFormats">-</span></div></div></div><div class="wsm-tabs"><button class="wsm-tab wsm-active" onclick="webScannerInstance.switchTab('single')">📄 Single Scan</button><button class="wsm-tab" onclick="webScannerInstance.switchTab('batch')">📚 Batch Scan</button></div><div id="wsmSingleTab" class="wsm-tab-content wsm-active"><div class="wsm-options" style="background: #e8f4f8; border: 2px solid #2196f3;"><h3>📦 Document Store</h3><div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;"><div><strong id="wsmStoreCount">0 documents</strong> stored locally<button class="wsm-btn-primary" onclick="webScannerInstance.openPreview()" style="margin-left: 15px; padding: 8px 16px; font-size: 13px;">👁️ View All</button></div><button class="wsm-btn-danger" onclick="webScannerInstance.clearAllDocuments()" style="padding: 8px 16px; font-size: 13px;">🗑️ Clear All</button></div></div><div class="wsm-controls"><button id="wsmCheckBtn" class="wsm-btn-secondary">🔄 Recheck Service</button><button id="wsmScanBtn" class="wsm-btn-primary" disabled>📄 Scan Document</button></div><div class="wsm-options"><h3>⚙️ Scan Settings</h3><div class="wsm-option-group"><label for="wsmSource">Input Source</label><select id="wsmSource"><option value="Platen">Flatbed (Platen)</option><option value="Feeder">Document Feeder (ADF)</option></select></div><div class="wsm-option-group"><label for="wsmResolution">Resolution (DPI)</label><select id="wsmResolution"><option value="150">150 DPI</option><option value="300" selected>300 DPI</option><option value="600">600 DPI</option></select></div><div class="wsm-option-group"><label for="wsmColorMode">Color Mode</label><select id="wsmColorMode"><option value="RGB24" selected>Color</option><option value="Grayscale8">Grayscale</option><option value="BlackAndWhite1">Black & White</option></select></div><div class="wsm-option-group"><label for="wsmIntent">Scan Intent</label><select id="wsmIntent"><option value="Document" selected>Document</option><option value="Photo">Photo</option><option value="TextAndGraphic">Text and Graphic</option></select></div><div class="wsm-option-group"><label for="wsmFormat">Output Format</label><select id="wsmFormat"><option value="image/jpeg">JPEG</option><option value="image/png">PNG</option><option value="application/pdf">PDF</option></select></div></div></div><div id="wsmBatchTab" class="wsm-tab-content"><div class="wsm-options" style="background: #e8f4f8; border: 2px solid #2196f3;"><h3>📦 Document Store</h3><div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;"><div><strong id="wsmStoreCountBatch">0 documents</strong> stored<button class="wsm-btn-primary" onclick="webScannerInstance.openPreview()" style="margin-left: 15px; padding: 8px 16px; font-size: 13px;">👁️ View All</button></div><button class="wsm-btn-danger" onclick="webScannerInstance.clearAllDocuments()" style="padding: 8px 16px; font-size: 13px;">🗑️ Clear All</button></div></div><div class="wsm-options"><h3>🔄 Scan Mode</h3><div class="wsm-radio-group"><label class="wsm-radio-option wsm-selected"><input type="radio" name="wsmScanMode" value="single" checked><div><strong>Single scan</strong><br><small>One operation</small></div></label><label class="wsm-radio-option"><input type="radio" name="wsmScanMode" value="prompt"><div><strong>Multiple scans (prompt)</strong><br><small>Replace paper between scans</small></div></label><div class="wsm-sub-options" id="wsmPromptOptions"><div class="wsm-option-group"><label for="wsmPromptScans">Number of scans</label><input type="number" id="wsmPromptScans" value="3" min="2" max="20"></div></div><label class="wsm-radio-option"><input type="radio" name="wsmScanMode" value="delay"><div><strong>Multiple scans (delay)</strong><br><small>Automatic with delay</small></div></label><div class="wsm-sub-options" id="wsmDelayOptions"><div class="wsm-option-group"><label for="wsmDelayScans">Number of scans</label><input type="number" id="wsmDelayScans" value="3" min="2" max="20"></div><div class="wsm-option-group"><label for="wsmDelayTime">Delay (seconds)</label><input type="number" id="wsmDelayTime" value="10" min="5" max="60"></div></div></div></div><div class="wsm-options"><h3>💾 Output Configuration</h3><div class="wsm-radio-group"><label class="wsm-radio-option wsm-selected"><input type="radio" name="wsmOutputMode" value="preview" checked><div><strong>Load into preview</strong><br><small>Review before saving</small></div></label><label class="wsm-radio-option"><input type="radio" name="wsmOutputMode" value="single"><div><strong>Save to single file</strong><br><small>All pages combined</small></div></label><label class="wsm-radio-option"><input type="radio" name="wsmOutputMode" value="multiple"><div><strong>Save to multiple files</strong><br><small>Split files</small></div></label><div class="wsm-sub-options" id="wsmMultipleOptions"><div class="wsm-option-group"><label for="wsmSplitMode">Split by</label><select id="wsmSplitMode"><option value="scan">One file per scan</option><option value="page">One file per page</option></select></div><div class="wsm-option-group"><label for="wsmFilenamePattern">Filename pattern</label><input type="text" id="wsmFilenamePattern" value="scan-$(nnn)"><small style="color: #666; display: block; margin-top: 5px;">Use $(nnn) for numbering</small></div></div></div></div><div class="wsm-controls"><button id="wsmStartBatchBtn" class="wsm-btn-primary" disabled>🚀 Start Batch Scan</button><button id="wsmStopBatchBtn" class="wsm-btn-danger" disabled style="display: none;">⏹️ Stop Batch</button></div><div id="wsmBatchProgress" class="wsm-batch-progress"><h3>📊 Batch Progress</h3><div class="wsm-batch-status"><span id="wsmBatchStatusText">Initializing...</span><span id="wsmBatchCounter">0 / 0</span></div><div class="wsm-progress-bar"><div id="wsmBatchProgressFill" class="wsm-progress-fill" style="width: 0%">0%</div></div><div class="wsm-batch-log" id="wsmBatchLog"></div></div></div><div id="wsmResult" class="wsm-result"></div></div></div></div><div id="wsmPreviewModal" class="wsm-preview-modal"><div class="wsm-preview-container"><div class="wsm-preview-header"><h2>📄 Scanned Documents</h2><button class="wsm-close-btn" onclick="webScannerInstance.closePreview()">×</button></div><div class="wsm-preview-body"><div id="wsmPreviewGrid" class="wsm-preview-grid"></div></div><div class="wsm-preview-actions"><button class="wsm-btn-secondary" onclick="webScannerInstance.clearAllDocuments()">🗑️ Clear All</button><button class="wsm-btn-danger" onclick="webScannerInstance.closePreview()">Close</button><button class="wsm-btn-success" onclick="webScannerInstance.approveAndDownload()">✓ Download All</button></div></div></div><div id="wsmBatchPromptModal" class="wsm-batch-prompt-modal"><div class="wsm-batch-prompt-content"><h2>📄 Ready for Next Scan</h2><p id="wsmPromptMessage">Replace paper and click Continue.</p><div class="wsm-batch-prompt-actions"><button class="wsm-btn-danger" onclick="webScannerInstance.cancelBatchPrompt()">Cancel</button><button class="wsm-btn-success" onclick="webScannerInstance.continueBatchPrompt()">Continue</button></div></div></div>`;
     }
 
     addStyles() {
@@ -533,49 +511,26 @@ class WebScannerModal {
         this.el.scanBtn.disabled = true;
         this.el.scanBtn.innerHTML = '<div class="wsm-spinner"></div> Scanning...';
         this.el.result.classList.remove('wsm-show');
-
-        const isADF = document.getElementById('wsmSource').value === 'Feeder';
-        const selectedFormat = document.getElementById('wsmFormat').value;
-
         const opts = {
             source: document.getElementById('wsmSource').value,
             resolution: parseInt(document.getElementById('wsmResolution').value),
             colorMode: document.getElementById('wsmColorMode').value,
-            format: isADF ? 'image/jpeg' : selectedFormat, // Force JPEG for ADF
+            format: document.getElementById('wsmFormat').value,
             intent: document.getElementById('wsmIntent').value
         };
 
         console.log('🖨️ Starting scan with options:', opts);
-        if (isADF && selectedFormat === 'application/pdf') {
-            console.log('ℹ️ Note: Using JPEG format for ADF to get separate pages (PDF would combine them)');
-        }
 
-        this.documentStore.format = selectedFormat; // Store original format choice
-
+        this.documentStore.format = opts.format;
         try {
             const docs = await this.scanner.scan(opts);
             console.log(`✅ Scan complete: ${docs.length} page(s) scanned`);
 
             this.el.scanBtn.innerHTML = '<div class="wsm-spinner"></div> Processing...';
-
-            // For ADF: Store each page as a separate scan
-            if (isADF && docs.length > 0) {
-                console.log(`📄 ADF mode: Storing ${docs.length} page(s) as separate scans`);
-                for (let i = 0; i < docs.length; i++) {
-                    this.documentStore.scanCount++;
-                    await this.addDocumentsToStore([docs[i]], this.documentStore.scanCount);
-                    console.log(`✅ Page ${i + 1} stored as scan #${this.documentStore.scanCount}`);
-                }
-                this.el.result.className = 'wsm-result wsm-success wsm-show';
-                this.el.result.textContent = `✅ Scanned ${docs.length} page(s) from ADF - each stored as separate scan`;
-            } else {
-                // For Flatbed: Store all pages under one scan number
-                this.documentStore.scanCount++;
-                await this.addDocumentsToStore(docs, this.documentStore.scanCount);
-                this.el.result.className = 'wsm-result wsm-success wsm-show';
-                this.el.result.textContent = `✅ Scanned ${docs.length} page(s) - stored locally`;
-            }
-
+            this.documentStore.scanCount++;
+            await this.addDocumentsToStore(docs, this.documentStore.scanCount);
+            this.el.result.className = 'wsm-result wsm-success wsm-show';
+            this.el.result.textContent = `✅ Scanned ${docs.length} page(s) - stored locally`;
             this.openPreview();
             if (this.onDocumentsScanned) this.onDocumentsScanned(this.getDocuments());
         } catch (e) {
@@ -588,95 +543,55 @@ class WebScannerModal {
         }
     }
 
-    // 4. FIXED startBatchScan() - For ADF: ONE scan operation, then split pages
     async startBatchScan() {
         const mode = document.querySelector('input[name="wsmScanMode"]:checked').value;
         const outputMode = document.querySelector('input[name="wsmOutputMode"]:checked').value;
-        const isADF = document.getElementById('wsmSource').value === 'Feeder';
-        const selectedFormat = document.getElementById('wsmFormat').value;
-
-        // Force JPEG format for ADF to get separate pages
-        const opts = {
-            source: document.getElementById('wsmSource').value,
-            resolution: parseInt(document.getElementById('wsmResolution').value),
-            colorMode: document.getElementById('wsmColorMode').value,
-            format: isADF ? 'image/jpeg' : selectedFormat, // Force JPEG for ADF
-            intent: document.getElementById('wsmIntent').value
-        };
-
         this.batchState.active = true;
         this.batchState.mode = mode;
         this.batchState.currentScan = 0;
         this.batchState.totalScans = mode === 'single' ? 1 : mode === 'prompt' ? parseInt(document.getElementById('wsmPromptScans').value) : parseInt(document.getElementById('wsmDelayScans').value);
-        this.documentStore.format = selectedFormat; // Store original format choice
-
+        const opts = {
+            source: document.getElementById('wsmSource').value,
+            resolution: parseInt(document.getElementById('wsmResolution').value),
+            colorMode: document.getElementById('wsmColorMode').value,
+            format: document.getElementById('wsmFormat').value,
+            intent: document.getElementById('wsmIntent').value
+        };
+        this.documentStore.format = opts.format;
         this.el.startBatchBtn.disabled = true;
         this.el.stopBatchBtn.disabled = false;
         this.el.stopBatchBtn.style.display = 'block';
         this.el.batchProgress.classList.add('wsm-show');
         this.el.result.classList.remove('wsm-show');
         this.el.batchLog.innerHTML = '';
-
+        this.addLog('info', `Starting batch: ${mode} mode, ${this.batchState.totalScans} scan(s)`);
         let batchDocs = [];
         let batchGroups = [];
-
         try {
-            if (isADF) {
-                // ADF MODE: Do ONE scan operation, ADF will pull all loaded pages
-                this.addLog('info', `ADF Mode: Starting single scan operation (will pull all loaded pages)`);
-                if (selectedFormat === 'application/pdf') {
-                    this.addLog('info', `Note: Using JPEG format for ADF to get separate pages (PDF combines pages)`);
+            for (let i = 0; i < this.batchState.totalScans; i++) {
+                if (!this.batchState.active) {
+                    this.addLog('error', 'Batch cancelled');
+                    break;
                 }
-                this.addLog('info', `Make sure you have loaded the correct number of pages in the ADF feeder`);
-
-                this.batchState.currentScan = 1;
-                this.batchState.totalScans = 1;
+                this.batchState.currentScan = i + 1;
                 this.updateBatchProgress();
-
+                this.addLog('info', `Scan ${i + 1} of ${this.batchState.totalScans}: Starting...`);
                 const docs = await this.scanner.scan(opts);
-                this.addLog('success', `ADF pulled ${docs.length} page(s) from feeder`);
-
-                // Store each page as a separate scan
-                for (let i = 0; i < docs.length; i++) {
-                    this.documentStore.scanCount++;
-                    await this.addDocumentsToStore([docs[i]], this.documentStore.scanCount);
-                    batchGroups.push([docs[i]]);
-                    batchDocs.push(docs[i]);
-                    this.addLog('success', `Page ${i + 1} stored as scan #${this.documentStore.scanCount}`);
-                }
-
-            } else {
-                // FLATBED MODE: Multiple scan operations with prompts/delays
-                this.addLog('info', `Flatbed Mode: ${mode} mode, ${this.batchState.totalScans} scan(s)`);
-
-                for (let i = 0; i < this.batchState.totalScans; i++) {
-                    if (!this.batchState.active) {
-                        this.addLog('error', 'Batch cancelled');
-                        break;
-                    }
-                    this.batchState.currentScan = i + 1;
-                    this.updateBatchProgress();
-                    this.addLog('info', `Scan ${i + 1} of ${this.batchState.totalScans}: Starting...`);
-
-                    const docs = await this.scanner.scan(opts);
-                    this.documentStore.scanCount++;
-                    this.addLog('info', `Generating previews for ${docs.length} page(s)...`);
-                    await this.addDocumentsToStore(docs, this.documentStore.scanCount);
-                    batchGroups.push(docs);
-                    batchDocs.push(...docs);
-                    this.addLog('success', `Scan ${i + 1} complete: ${docs.length} page(s)`);
-
-                    if (i < this.batchState.totalScans - 1) {
-                        if (mode === 'prompt') await this.showBatchPrompt(i + 1, this.batchState.totalScans);
-                        else if (mode === 'delay') {
-                            const delay = parseInt(document.getElementById('wsmDelayTime').value);
-                            this.addLog('info', `Waiting ${delay}s...`);
-                            await new Promise(r => setTimeout(r, delay * 1000));
-                        }
+                this.documentStore.scanCount++;
+                this.addLog('info', `Generating previews for ${docs.length} page(s)...`);
+                await this.addDocumentsToStore(docs, this.documentStore.scanCount);
+                batchGroups.push(docs);
+                batchDocs.push(...docs);
+                this.addLog('success', `Scan ${i + 1} complete: ${docs.length} page(s)`);
+                if (i < this.batchState.totalScans - 1) {
+                    if (mode === 'prompt') await this.showBatchPrompt(i + 1, this.batchState.totalScans);
+                    else if (mode === 'delay') {
+                        const delay = parseInt(document.getElementById('wsmDelayTime').value);
+                        this.addLog('info', `Waiting ${delay}s...`);
+                        await new Promise(r => setTimeout(r, delay * 1000));
                     }
                 }
             }
-
             if (this.batchState.active) {
                 this.addLog('success', `Batch complete! ${batchDocs.length} page(s) stored`);
                 await this.handleBatchOutput(outputMode, batchDocs, batchGroups);

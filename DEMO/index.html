@@ -148,7 +148,7 @@
 
         .upload-controls {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr;
             gap: 10px;
             margin-bottom: 20px;
         }
@@ -369,373 +369,6 @@
             color: #721c24;
         }
 
-        /* Scanner Setup Modal Styles */
-        .scanner-setup-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            z-index: 10000;
-            overflow-y: auto;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .scanner-setup-modal.show {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        .scanner-setup-content {
-            background: white;
-            border-radius: 12px;
-            max-width: 700px;
-            width: 100%;
-            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
-            animation: slideUp 0.4s ease;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        @keyframes slideUp {
-            from {
-                transform: translateY(30px);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .scanner-setup-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            border-radius: 12px 12px 0 0;
-            text-align: center;
-        }
-
-        .scanner-setup-header h2 {
-            margin: 0 0 10px 0;
-            font-size: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-        }
-
-        .scanner-setup-header p {
-            margin: 0;
-            opacity: 0.95;
-            font-size: 15px;
-        }
-
-        .scanner-setup-body {
-            padding: 40px;
-        }
-
-        .setup-alert {
-            background: #fff3cd;
-            border: 2px solid #ffc107;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 30px;
-            display: flex;
-            align-items: start;
-            gap: 15px;
-        }
-
-        .setup-alert-icon {
-            font-size: 32px;
-            flex-shrink: 0;
-        }
-
-        .setup-alert-content h3 {
-            margin: 0 0 8px 0;
-            color: #856404;
-            font-size: 18px;
-        }
-
-        .setup-alert-content p {
-            margin: 0;
-            color: #856404;
-            line-height: 1.6;
-        }
-
-        .setup-steps {
-            margin-bottom: 30px;
-        }
-
-        .setup-step {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
-            transition: all 0.3s;
-        }
-
-        .setup-step:hover {
-            background: #e9ecef;
-            transform: translateX(5px);
-        }
-
-        .setup-step-number {
-            font-size: 32px;
-            font-weight: bold;
-            color: #667eea;
-            min-width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
-            flex-shrink: 0;
-        }
-
-        .setup-step-content h3 {
-            margin: 0 0 10px 0;
-            color: #333;
-            font-size: 18px;
-        }
-
-        .setup-step-content p {
-            margin: 0 0 15px 0;
-            color: #666;
-            line-height: 1.6;
-        }
-
-        .setup-step-content ul {
-            margin: 10px 0;
-            padding-left: 20px;
-            color: #666;
-        }
-
-        .setup-step-content li {
-            margin: 8px 0;
-            line-height: 1.5;
-        }
-
-        .download-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 14px 28px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .download-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-        }
-
-        .download-button-icon {
-            font-size: 20px;
-        }
-
-        .verify-section {
-            background: #e8f4f8;
-            border: 2px solid #2196f3;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 30px;
-        }
-
-        .verify-section h3 {
-            margin: 0 0 15px 0;
-            color: #1565c0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .verify-section p {
-            margin: 0 0 15px 0;
-            color: #666;
-            line-height: 1.6;
-        }
-
-        .verify-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 24px;
-            background: #2196f3;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .verify-button:hover {
-            background: #1976d2;
-            transform: translateY(-2px);
-        }
-
-        .verify-button.checking {
-            background: #6c757d;
-            cursor: not-allowed;
-        }
-
-        .verify-status {
-            margin-top: 15px;
-            padding: 12px;
-            border-radius: 6px;
-            display: none;
-        }
-
-        .verify-status.show {
-            display: block;
-        }
-
-        .verify-status.success {
-            background: #d4edda;
-            border: 1px solid #c3e6cb;
-            color: #155724;
-        }
-
-        .verify-status.error {
-            background: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-        }
-
-        .setup-footer {
-            background: #f8f9fa;
-            padding: 20px 40px;
-            border-radius: 0 0 12px 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .setup-footer-note {
-            color: #6c757d;
-            font-size: 13px;
-            flex: 1;
-        }
-
-        .setup-footer-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn-close-setup {
-            padding: 12px 24px;
-            background: #6c757d;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-close-setup:hover {
-            background: #5a6268;
-        }
-
-        .btn-continue {
-            padding: 12px 24px;
-            background: #28a745;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-continue:hover {
-            background: #218838;
-            transform: translateY(-2px);
-        }
-
-        .btn-continue:disabled {
-            background: #6c757d;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .troubleshooting-section {
-            background: #fff8e1;
-            border: 2px solid #ffc107;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-
-        .troubleshooting-section h3 {
-            margin: 0 0 15px 0;
-            color: #f57c00;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .troubleshooting-section ul {
-            margin: 0;
-            padding-left: 20px;
-            color: #666;
-        }
-
-        .troubleshooting-section li {
-            margin: 10px 0;
-            line-height: 1.6;
-        }
-
-        .spinner {
-            display: inline-block;
-            width: 14px;
-            height: 14px;
-            border: 2px solid rgba(255, 255, 255, .3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
         @media (max-width: 768px) {
             .form-grid {
                 grid-template-columns: 1fr;
@@ -756,184 +389,11 @@
             .form-actions .btn {
                 width: 100%;
             }
-
-            .scanner-setup-content {
-                margin: 10px;
-            }
-
-            .scanner-setup-body {
-                padding: 20px;
-            }
-
-            .setup-step {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .setup-footer {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .setup-footer-actions {
-                width: 100%;
-            }
-
-            .setup-footer-actions button {
-                flex: 1;
-            }
         }
     </style>
 </head>
 
 <body>
-    <!-- Scanner Setup Modal -->
-    <div id="scannerSetupModal" class="scanner-setup-modal">
-        <div class="scanner-setup-content">
-            <!-- Header -->
-            <div class="scanner-setup-header">
-                <h2>
-                    <span>🖨️</span>
-                    Scanner Setup Required
-                </h2>
-                <p>NAPS2 WebScan software needs to be installed to use scanning features</p>
-            </div>
-
-            <!-- Body -->
-            <div class="scanner-setup-body">
-                <!-- Alert -->
-                <div class="setup-alert">
-                    <div class="setup-alert-icon">⚠️</div>
-                    <div class="setup-alert-content">
-                        <h3>Scanner Service Not Detected</h3>
-                        <p>We couldn't connect to the NAPS2 WebScan service. This free software enables browser-based
-                            scanning and needs to be installed on your computer.</p>
-                    </div>
-                </div>
-
-                <!-- Setup Steps -->
-                <div class="setup-steps">
-                    <!-- Step 1: Download -->
-                    <div class="setup-step">
-                        <div class="setup-step-number">1</div>
-                        <div class="setup-step-content">
-                            <h3>📥 Download NAPS2</h3>
-                            <p>Download the NAPS2 installer for your operating system:</p>
-                            <a href="#" id="downloadLink" class="download-button" target="_blank">
-                                <span class="download-button-icon">⬇️</span>
-                                Download NAPS2 Installer
-                            </a>
-                            <p style="margin-top: 15px; font-size: 13px; color: #6c757d;">
-                                💡 <strong>Note:</strong> The download link will be provided by your administrator
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Step 2: Install -->
-                    <div class="setup-step">
-                        <div class="setup-step-number">2</div>
-                        <div class="setup-step-content">
-                            <h3>⚙️ Install the Software</h3>
-                            <p>Follow these steps to install NAPS2:</p>
-                            <ul>
-                                <li>Run the downloaded installer file</li>
-                                <li>Follow the installation wizard instructions</li>
-                                <li>Accept the default installation settings</li>
-                                <li>Check 'Always run on windows startup'</li>
-                                <li>Wait for the installation to complete</li>
-                                <li>Click "Finish" when installation is done</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <!-- Step 3: Start Service -->
-                    <div class="setup-step">
-                        <div class="setup-step-number">3</div>
-                        <div class="setup-step-content">
-                            <p><i>If not running, start NAPS2 manually</i></p>
-                            <h3>🚀 Start NAPS2</h3>
-                            <p>Launch NAPS2 and enable the WebScan feature:</p>
-                            <ul>
-                                <li>Open NAPS2 from your Start Menu or Applications folder</li>
-                                <li>Go to <strong>Tools</strong> → <strong>WebScan</strong> (or press
-                                    <strong>Ctrl+W</strong>)
-                                </li>
-                                <li>The WebScan service will start automatically</li>
-                                <li>Keep NAPS2 running in the background</li>
-                            </ul>
-                            <p style="margin-top: 10px;">
-                                ✅ You'll see a message confirming the service is running on
-                                <code>http://localhost:9801</code>
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Step 4: Connect Scanner -->
-                    <div class="setup-step">
-                        <div class="setup-step-number">4</div>
-                        <div class="setup-step-content">
-                            <h3>🔌 Connect Your Scanner</h3>
-                            <p>Make sure your scanner is properly connected:</p>
-                            <ul>
-                                <li>Connect your scanner to your computer via USB or network</li>
-                                <li>Turn on the scanner and wait for it to be ready</li>
-                                <li>Install scanner drivers if prompted (usually automatic)</li>
-                                <li>Verify the scanner appears in NAPS2's device list</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Verify Connection -->
-                <div class="verify-section">
-                    <h3>
-                        <span>🔍</span>
-                        Verify Connection
-                    </h3>
-                    <p>Once you've completed the steps above, click the button below to check if the scanner service is
-                        running:</p>
-                    <button id="verifyConnectionBtn" class="verify-button" onclick="verifyConnection()">
-                        <span>🔄</span>
-                        Check Connection
-                    </button>
-                    <div id="verifyStatus" class="verify-status"></div>
-                </div>
-
-                <!-- Troubleshooting -->
-                <div class="troubleshooting-section">
-                    <h3>
-                        <span>🛠️</span>
-                        Troubleshooting Tips
-                    </h3>
-                    <ul>
-                        <li><strong>Service not detected:</strong> Make sure NAPS2 is running and WebScan is enabled
-                        </li>
-                        <li><strong>Scanner not found:</strong> Check USB connection and ensure drivers are installed
-                        </li>
-                        <li><strong>Port blocked:</strong> Check if another application is using port 9801</li>
-                        <li><strong>Firewall issues:</strong> Allow NAPS2 through your firewall settings</li>
-                        <li><strong>Still having issues?</strong> Try restarting NAPS2 or your computer</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Footer -->
-            <div class="setup-footer">
-                <div class="setup-footer-note">
-                    💡 Once the scanner is ready, you can continue with your document upload
-                </div>
-                <div class="setup-footer-actions">
-                    <button class="btn-close-setup" onclick="closeScannerSetupModal()">
-                        Close
-                    </button>
-                    <button id="continueBtn" class="btn-continue" disabled onclick="continueAfterSetup()">
-                        ✓ Continue
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="container">
         <h1>📄 Document Upload Form</h1>
         <p class="subtitle">Fill in document details and scan or upload files</p>
@@ -1028,6 +488,10 @@
                         </label>
                         <input type="file" id="fileUpload" multiple accept=".pdf,.jpg,.jpeg,.png" style="display: none;"
                             onchange="handleFileUpload(event)">
+
+                        <button type="button" class="btn btn-info" id="viewAllBtn" disabled onclick="viewAllFiles()">
+                            👁️ View All (<span id="viewAllCount">0</span>)
+                        </button>
                     </div>
 
                     <small style="color: #6c757d;">
@@ -1073,72 +537,6 @@
         const filePreviewGrid = document.getElementById('filePreviewGrid');
         const result = document.getElementById('result');
 
-        // Scanner Setup Modal Functions
-        window.openScannerSetupModal = function () {
-            document.getElementById('scannerSetupModal').classList.add('show');
-            document.body.style.overflow = 'hidden';
-        };
-
-        window.closeScannerSetupModal = function () {
-            document.getElementById('scannerSetupModal').classList.remove('show');
-            document.body.style.overflow = '';
-        };
-
-        window.verifyConnection = async function () {
-            const btn = document.getElementById('verifyConnectionBtn');
-            const status = document.getElementById('verifyStatus');
-            const continueBtn = document.getElementById('continueBtn');
-
-            btn.classList.add('checking');
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner"></span> Checking...';
-            status.classList.remove('show');
-
-            try {
-                const response = await fetch('http://localhost:9801/eSCL/ScannerStatus', {
-                    method: 'GET',
-                    mode: 'cors'
-                });
-
-                if (response.ok) {
-                    status.className = 'verify-status success show';
-                    status.innerHTML = '✅ <strong>Success!</strong> Scanner service is running and ready to use.';
-                    continueBtn.disabled = false;
-
-                    btn.classList.remove('checking');
-                    btn.disabled = false;
-                    btn.innerHTML = '<span>✓</span> Connected';
-                    btn.style.background = '#28a745';
-                } else {
-                    throw new Error('Service not responding');
-                }
-            } catch (error) {
-                status.className = 'verify-status error show';
-                status.innerHTML = '❌ <strong>Not Connected</strong> - Scanner service not detected. Please complete the setup steps above.';
-                continueBtn.disabled = true;
-
-                btn.classList.remove('checking');
-                btn.disabled = false;
-                btn.innerHTML = '<span>🔄</span> Check Connection';
-                btn.style.background = '#2196f3';
-            }
-        };
-
-        window.continueAfterSetup = function () {
-            closeScannerSetupModal();
-
-            if (window.scannerModal && typeof window.scannerModal.checkService === 'function') {
-                window.scannerModal.checkService();
-            }
-
-            result.className = 'result success show';
-            result.textContent = '✅ Scanner is ready! You can now scan documents.';
-            setTimeout(() => result.classList.remove('show'), 5000);
-        };
-
-        // Set download link - UPDATE THIS WITH YOUR DOWNLOAD URL
-        document.getElementById('downloadLink').href = 'https://github.com/cyanfish/naps2/releases'; //Change this to your path for the application
-
         // Load WebScanner Modal
         const script = document.createElement('script');
         script.src = './js/webscanner-modal.js';
@@ -1146,10 +544,11 @@
             console.log('✅ WebScanner Modal loaded');
 
             window.scannerModal = new WebScannerModal({
-                autoCheckService: false, // Don't auto-check, we'll do it manually
+                autoCheckService: true,
                 onDocumentsScanned: async function (documents) {
                     console.log('📄 Scanned documents:', documents.length);
 
+                    // Add scanned documents to form
                     for (let i = 0; i < documents.length; i++) {
                         const doc = documents[i];
                         addFileToForm(
@@ -1167,8 +566,8 @@
                 }
             });
 
-            // Check scanner on load
-            checkScannerOnLoad();
+            // Check scanner capabilities on page load
+            checkScannerCapabilities();
         };
         script.onerror = function () {
             console.error('❌ Failed to load WebScanner Modal');
@@ -1176,9 +575,9 @@
         };
         document.head.appendChild(script);
 
-        // Check scanner on page load
-        async function checkScannerOnLoad() {
-            console.log('🔍 Checking scanner on page load...');
+        // Check scanner capabilities function
+        async function checkScannerCapabilities() {
+            console.log('🔍 Checking scanner capabilities...');
 
             if (!window.scannerModal || !window.scannerModal.scanner) {
                 console.warn('⚠️ Scanner modal not initialized yet');
@@ -1186,30 +585,107 @@
             }
 
             try {
+                // Check if service is available
+                console.log('📡 Checking NAPS2 WebScan service...');
                 const isAvailable = await window.scannerModal.scanner.isServiceAvailable();
 
                 if (!isAvailable) {
-                    console.log('⚠️ Scanner service not detected - showing setup modal');
-                    // Show setup modal after a short delay
-                    setTimeout(() => {
-                        openScannerSetupModal();
-                    }, 500);
-                } else {
-                    console.log('✅ Scanner service is available');
-                    // Optionally get capabilities
-                    if (typeof window.scannerModal.scanner.getScannerCapabilities === 'function') {
-                        const capabilities = await window.scannerModal.scanner.getScannerCapabilities();
-                        if (capabilities) {
-                            console.log('✅ Scanner capabilities detected:', capabilities);
-                        }
-                    }
+                    console.error('❌ NAPS2 WebScan service is not running');
+                    console.log('💡 Please start NAPS2 and ensure WebScan is enabled');
+                    return;
                 }
+
+                console.log('✅ NAPS2 WebScan service is running');
+
+                // Check if getScannerCapabilities method exists
+                if (typeof window.scannerModal.scanner.getScannerCapabilities !== 'function') {
+                    console.warn('⚠️ Scanner capabilities detection not available in current webscanner-modal.js');
+                    console.log('📝 To enable capabilities detection:');
+                    console.log('   1. Replace your ./js/webscanner-modal.js file');
+                    console.log('   2. Use the updated version with getScannerCapabilities() method');
+                    console.log('   3. The updated version was provided in the artifact above');
+                    return;
+                }
+
+                // Get scanner capabilities
+                console.log('🔍 Fetching scanner capabilities...');
+                const capabilities = await window.scannerModal.scanner.getScannerCapabilities();
+
+                if (!capabilities) {
+                    console.warn('⚠️ Could not retrieve scanner capabilities');
+                    return;
+                }
+
+                console.log('✅ Scanner capabilities retrieved successfully');
+                console.log('═══════════════════════════════════════');
+                console.log('📊 SCANNER CAPABILITIES:');
+                console.log('═══════════════════════════════════════');
+
+                // Log Input Sources
+                console.log('\n📥 INPUT SOURCES:');
+                if (capabilities.inputSources.length > 0) {
+                    capabilities.inputSources.forEach(source => {
+                        console.log(`  ▪ ${source.label}`);
+                        console.log(`    - Type: ${source.type}`);
+                        console.log(`    - Max Width: ${source.maxWidth}`);
+                        console.log(`    - Max Height: ${source.maxHeight}`);
+                        if (source.supportsDuplex) {
+                            console.log(`    - Duplex: ✅ Supported`);
+                        }
+                    });
+                } else {
+                    console.log('  ⚠️ No input sources detected');
+                }
+
+                // Log Resolutions
+                console.log('\n🎯 SUPPORTED RESOLUTIONS:');
+                if (capabilities.resolutions.length > 0) {
+                    console.log(`  ${capabilities.resolutions.join(' DPI, ')} DPI`);
+                } else {
+                    console.log('  ⚠️ No resolutions detected');
+                }
+
+                // Log Color Modes
+                console.log('\n🎨 COLOR MODES:');
+                if (capabilities.colorModes.length > 0) {
+                    capabilities.colorModes.forEach(mode => {
+                        const modeNames = {
+                            'RGB24': '🌈 Color (RGB)',
+                            'Grayscale8': '⚫ Grayscale',
+                            'BlackAndWhite1': '⚪ Black & White'
+                        };
+                        console.log(`  ▪ ${modeNames[mode] || mode}`);
+                    });
+                } else {
+                    console.log('  ⚠️ No color modes detected');
+                }
+
+                // Log Document Formats
+                console.log('\n📄 DOCUMENT FORMATS:');
+                if (capabilities.documentFormats.length > 0) {
+                    capabilities.documentFormats.forEach(format => {
+                        console.log(`  ▪ ${format}`);
+                    });
+                } else {
+                    console.log('  ⚠️ No formats detected');
+                }
+
+                // Log Max Dimensions
+                console.log('\n📐 MAXIMUM SCAN DIMENSIONS:');
+                console.log(`  Width: ${capabilities.maxWidth}`);
+                console.log(`  Height: ${capabilities.maxHeight}`);
+
+                console.log('\n═══════════════════════════════════════');
+                console.log('✅ Scanner is ready to use!');
+                console.log('═══════════════════════════════════════\n');
+
+                // Store capabilities globally for debugging
+                window.scannerCapabilities = capabilities;
+                console.log('💡 Tip: Access capabilities anytime with: window.scannerCapabilities');
+
             } catch (error) {
-                console.error('❌ Error checking scanner:', error);
-                // Show setup modal on error
-                setTimeout(() => {
-                    openScannerSetupModal();
-                }, 500);
+                console.error('❌ Error checking scanner capabilities:', error);
+                console.log('💡 Make sure NAPS2 WebScan service is running on http://localhost:9801');
             }
         }
 
@@ -1391,6 +867,7 @@
                 return;
             }
 
+            // Get form data
             const formData = {
                 docName: document.getElementById('docName').value,
                 docNumber: document.getElementById('docNumber').value,
@@ -1401,6 +878,7 @@
                 files: []
             };
 
+            // Add file info
             window.attachedFiles.forEach((file) => {
                 formData.files.push({
                     name: file.name,
@@ -1410,13 +888,22 @@
                 });
             });
 
+            // Show loading
             const submitBtn = document.getElementById('submitBtn');
             const originalHTML = submitBtn.innerHTML;
             submitBtn.disabled = true;
             submitBtn.innerHTML = '⏳ Submitting...';
 
-            console.log('📤 Form submitted:', formData);
+            // Log submission data
+            console.log('📤 Form submitted:');
+            console.log('- Document:', formData.docName);
+            console.log('- Number:', formData.docNumber);
+            console.log('- Type:', formData.docType);
+            console.log('- Date:', formData.docDate);
+            console.log('- Files:', formData.fileCount);
+            console.log('- Files data:', formData.files);
 
+            // Simulate submission
             setTimeout(() => {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalHTML;
