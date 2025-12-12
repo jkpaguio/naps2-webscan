@@ -86,12 +86,19 @@ namespace NAPS2.WebScan.TrayApp
                 {
                     Log("  -> Handling preflight (OPTIONS)");
                     
+                    // Check if this is a Private Network Access preflight
+                    var requestPrivateNetwork = request.Headers["Access-Control-Request-Private-Network"];
+                    if (!string.IsNullOrEmpty(requestPrivateNetwork))
+                    {
+                        Log($"  -> Private Network Access request detected: {requestPrivateNetwork}");
+                    }
+                    
                     // Set all CORS headers for preflight
                     response.Headers.Set("Access-Control-Allow-Origin", "*");
                     response.Headers.Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
-                    response.Headers.Set("Access-Control-Allow-Headers", "*, Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Requested-With");
+                    response.Headers.Set("Access-Control-Allow-Headers", "*");
                     
-                    // CRITICAL: Private Network Access header
+                    // CRITICAL: Private Network Access header - MUST be present for HTTPS->localhost
                     response.Headers.Set("Access-Control-Allow-Private-Network", "true");
                     
                     response.Headers.Set("Access-Control-Max-Age", "86400");
@@ -100,7 +107,7 @@ namespace NAPS2.WebScan.TrayApp
                     response.StatusCode = 204; // No Content
                     response.ContentLength64 = 0;
                     
-                    Log($"  <- Preflight response: 204 (headers set)");
+                    Log($"  <- Preflight response: 204 (PNA allowed)");
                     response.Close();
                     return;
                 }
@@ -156,7 +163,7 @@ namespace NAPS2.WebScan.TrayApp
                 // Set CORS headers FIRST (before copying scanner headers)
                 response.Headers.Set("Access-Control-Allow-Origin", "*");
                 response.Headers.Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
-                response.Headers.Set("Access-Control-Allow-Headers", "*, Origin, X-Requested-With, Content-Type, Accept, Authorization");
+                response.Headers.Set("Access-Control-Allow-Headers", "*");
                 response.Headers.Set("Access-Control-Allow-Private-Network", "true");
                 response.Headers.Set("Access-Control-Expose-Headers", "*");
 
