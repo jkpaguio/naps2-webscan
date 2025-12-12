@@ -19,13 +19,11 @@ namespace NAPS2.WebScan.TrayApp
         private NotifyIcon trayIcon;
         private ContextMenuStrip trayMenu;
         private ScanServer? scanServer;
-        private CorsProxyServer? corsProxy;
         private CancellationTokenSource? cancellationTokenSource;
         private bool isRunning = false;
         private string scannerName = "No scanner detected";
         private string preferredScanSource = "Auto-detect";
-        private int serverPort = 9801; // Scanner service port
-        private int proxyPort = 9802;  // CORS proxy port (this is what your website should use)
+        private int serverPort = 9801;
         private string currentStatus = "Initializing...";
 
         // Auto-start constants
@@ -83,7 +81,6 @@ namespace NAPS2.WebScan.TrayApp
                     {
                         preferredScanSource = key.GetValue("ScanSource", "Auto-detect")?.ToString() ?? "Auto-detect";
                         serverPort = Convert.ToInt32(key.GetValue("Port", 9801));
-                        proxyPort = Convert.ToInt32(key.GetValue("ProxyPort", 9802));
                     }
                 }
             }
@@ -100,7 +97,6 @@ namespace NAPS2.WebScan.TrayApp
                     {
                         key.SetValue("ScanSource", preferredScanSource);
                         key.SetValue("Port", serverPort);
-                        key.SetValue("ProxyPort", proxyPort);
                     }
                 }
             }
@@ -145,17 +141,15 @@ namespace NAPS2.WebScan.TrayApp
                 cancellationTokenSource = new CancellationTokenSource();
                 var token = cancellationTokenSource.Token;
 
-                // Start CORS proxy first
-                corsProxy = new CorsProxyServer(proxyPort, serverPort);
-                var proxyTask = Task.Run(() => corsProxy.StartAsync(), token);
-
                 await Task.Run(async () =>
                 {
                     using var scanningContext = new ScanningContext(new ImageSharpImageContext());
                     var controller = new ScanController(scanningContext);
 
-                    // Create scanner server (no CORS modifications needed)
-                    scanServer = new ScanServer(scanningContext, new EsclServer());
+                    scanServer = new ScanServer(scanningContext, new EsclServer
+                    {
+                        SecurityPolicy = EsclSecurityPolicy.ServerAllowAnyOrigin
+                    });
 
                     // Find scanner
                     ScanDevice? firstDevice = null;
@@ -181,7 +175,6 @@ namespace NAPS2.WebScan.TrayApp
                     {
                         UpdateStatus("No scanner found", false);
                         ShowBalloonTip("No Scanner", "Please connect a scanner and restart", ToolTipIcon.Warning);
-                        corsProxy?.Stop();
                         return;
                     }
 
@@ -189,12 +182,9 @@ namespace NAPS2.WebScan.TrayApp
                     await scanServer.Start();
 
                     isRunning = true;
-                    UpdateStatus($"Running (Proxy: {proxyPort})", true);
+                    UpdateStatus($"Running on port {serverPort}", true);
                     ShowBalloonTip("Scanner Ready", 
-                        $"Scanner: {scannerName}\n" +
-                        $"Scanner Port: {serverPort}\n" +
-                        $"Web Access Port: {proxyPort} (Use this!)\n" +
-                        $"Source: {preferredScanSource}", 
+                        $"Scanner: {scannerName}\nPort: {serverPort}\nSource: {preferredScanSource}", 
                         ToolTipIcon.Info);
 
                     // Keep running until cancelled
@@ -227,10 +217,6 @@ namespace NAPS2.WebScan.TrayApp
                 UpdateStatus("Stopping...", false);
                 
                 cancellationTokenSource?.Cancel();
-                
-                // Stop proxy first
-                corsProxy?.Stop();
-                corsProxy = null;
                 
                 if (scanServer != null)
                 {
@@ -347,7 +333,7 @@ namespace NAPS2.WebScan.TrayApp
                 preferredScanSource,
                 IsAutoStartEnabled(),
                 isRunning,
-                proxyPort, // Show proxy port in settings
+                serverPort,
                 currentStatus))
             {
                 if (settingsForm.ShowDialog() == DialogResult.OK && settingsForm.SettingsSaved)
@@ -375,10 +361,9 @@ namespace NAPS2.WebScan.TrayApp
         {
             try
             {
-                // Open the proxy URL (this is what has CORS headers)
                 System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
                 {
-                    FileName = $"http://localhost:{proxyPort}/eSCL/ScannerStatus",
+                    FileName = $"http://localhost:{serverPort}/eSCL/ScannerStatus",
                     UseShellExecute = true
                 });
             }
@@ -393,14 +378,12 @@ namespace NAPS2.WebScan.TrayApp
         {
             MessageBox.Show(
                 $"ITBS WebScan System Tray Application\n\n" +
-                $"Version: 1.3.0 (CORS Proxy)\n" +
+                $"Version: 1.1.0\n" +
                 $"Scanner: {scannerName}\n" +
-                $"Scanner Port: {serverPort}\n" +
-                $"Web Access Port: {proxyPort} ⭐ Use this port from your website!\n" +
+                $"Port: {serverPort}\n" +
                 $"Scan Source: {preferredScanSource}\n" +
                 $"Auto-Start: {(IsAutoStartEnabled() ? "Enabled" : "Disabled")}\n\n" +
-                $"The proxy adds CORS headers automatically.\n" +
-                $"Update your website to use: http://localhost:{proxyPort}",
+                $"Provides web-based document scanning for local applications.",
                 "About ITBS WebScan",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
@@ -442,7 +425,6 @@ namespace NAPS2.WebScan.TrayApp
                 trayIcon?.Dispose();
                 trayMenu?.Dispose();
                 scanServer?.Dispose();
-                corsProxy?.Stop();
                 cancellationTokenSource?.Dispose();
             }
             base.Dispose(disposing);

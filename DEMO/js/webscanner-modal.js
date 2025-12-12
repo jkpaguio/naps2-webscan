@@ -9,7 +9,7 @@
 
 // WebScanner Core Class
 class WebScanner {
-    constructor(serviceUrl = 'http://localhost:9802') {
+    constructor(serviceUrl = 'http://localhost:9801') {
         this.serviceUrl = serviceUrl;
         this.esclEndpoint = `${serviceUrl}/eSCL`;
         this.capabilities = null;
@@ -17,14 +17,14 @@ class WebScanner {
 
     async isServiceAvailable() {
         try {
-            const res = await fetch(`${this.esclEndpoint}/ScannerStatus`, { method: 'GET', mode: 'cors', targetAddressSpace: 'private' });
+            const res = await fetch(`${this.esclEndpoint}/ScannerStatus`, { method: 'GET', mode: 'cors' });
             return res.ok;
         } catch (e) { return false; }
     }
 
     async getScannerCapabilities() {
         try {
-            const res = await fetch(`${this.esclEndpoint}/ScannerCapabilities`, { method: 'GET', mode: 'cors', targetAddressSpace: 'private' });
+            const res = await fetch(`${this.esclEndpoint}/ScannerCapabilities`, { method: 'GET', mode: 'cors' });
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
             const text = await res.text();
@@ -119,7 +119,7 @@ class WebScanner {
         console.log('📋 Scan XML Settings:');
         console.log(settings);
 
-        const res = await fetch(`${this.esclEndpoint}/ScanJobs`, { method: 'POST', mode: 'cors', targetAddressSpace: 'private', body: settings });
+        const res = await fetch(`${this.esclEndpoint}/ScanJobs`, { method: 'POST', mode: 'cors', body: settings });
 
         console.log(`📥 ScanJobs response: ${res.status} ${res.statusText}`);
 
@@ -137,7 +137,7 @@ class WebScanner {
     }
 
     async getNextDocument(jobUri) {
-        const res = await fetch(`${jobUri}/NextDocument`, { method: 'GET', mode: 'cors', targetAddressSpace: 'private' });
+        const res = await fetch(`${jobUri}/NextDocument`, { method: 'GET', mode: 'cors' });
 
         console.log(`📄 GetNextDocument response: ${res.status} ${res.statusText}`);
 
@@ -268,7 +268,7 @@ class WebScanner {
 // Main WebScannerModal Class
 class WebScannerModal {
     constructor(opts = {}) {
-        this.serviceUrl = opts.serviceUrl || 'http://localhost:9802';
+        this.serviceUrl = opts.serviceUrl || 'http://localhost:9801';
         this.scanner = new WebScanner(this.serviceUrl);
         this.onDocumentsScanned = opts.onDocumentsScanned || null;
         this.autoCheckService = opts.autoCheckService !== false;
@@ -937,7 +937,7 @@ class WebScannerModal {
     async checkScannerStatus() {
         console.log('🔍 Checking scanner status...');
         try {
-            const res = await fetch(`${this.scanner.esclEndpoint}/ScannerStatus`, { method: 'GET', mode: 'cors', targetAddressSpace: 'private' });
+            const res = await fetch(`${this.scanner.esclEndpoint}/ScannerStatus`, { method: 'GET', mode: 'cors' });
             if (!res.ok) {
                 console.error('❌ Failed to get scanner status:', res.status);
                 return null;
